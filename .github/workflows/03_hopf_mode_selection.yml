@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'triggers/hopf_branch.txt'
+      - '.github/workflows/03_hopf_mode_selection.yml'
 
 jobs:
   branch:
