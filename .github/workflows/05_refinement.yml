@@ -1,0 +1,42 @@
+name: 05 Numerical refinement
+
+on:
+  workflow_dispatch:
+
+jobs:
+  refine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { tau: 0.65, nx: 100, dt: 0.005, tag: t065-base }
+          - { tau: 0.65, nx: 100, dt: 0.0025, tag: t065-dt2 }
+          - { tau: 0.65, nx: 150, dt: 0.005, tag: t065-space }
+          - { tau: 1, nx: 100, dt: 0.005, tag: t1-base }
+          - { tau: 1, nx: 100, dt: 0.0025, tag: t1-dt2 }
+          - { tau: 1, nx: 150, dt: 0.005, tag: t1-space }
+          - { tau: 6.8, nx: 100, dt: 0.005, tag: t68-base }
+          - { tau: 6.8, nx: 100, dt: 0.0025, tag: t68-dt2 }
+          - { tau: 6.8, nx: 150, dt: 0.005, tag: t68-space }
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run refinement case
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',${{ matrix.nx }},${{ matrix.dt }},180,'upwind',0);
+      - name: Upload refinement outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: refinement-${{ matrix.tag }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
