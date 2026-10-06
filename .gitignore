@@ -1,0 +1,11 @@
+*.asv
+*.autosave
+*.m~
+*.mex*
+slprj/
+codegen/
+*.slxc
+.DS_Store
+Thumbs.db
+results/
+figures/generated/
