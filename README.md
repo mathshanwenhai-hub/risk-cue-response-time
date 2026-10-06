@@ -17,12 +17,12 @@ The benchmark domain is \([0,10]^2\).
 
 ## Benchmark prediction
 
-For the parameter set in \`matlab/riskcue_parameters.m\`, the continuous PDE mode calculation predicts approximately
+For the parameter set in `matlab/riskcue_parameters.m`, the continuous PDE mode calculation predicts approximately
 
-- lower response-time boundary: \`tau_in = 0.6087956390\`;
-- upper response-time boundary: \`tau_out = 6.6445349603\`;
-- first critical square-domain mode family: \`(4,6)\` and \`(6,4)\`;
-- last exiting mode family: \`(4,8)\` and \`(8,4)\`.
+- lower response-time boundary: `tau_in = 0.6087956390`;
+- upper response-time boundary: `tau_out = 6.6445349603`;
+- first critical square-domain mode family: `(4,6)` and `(6,4)`;
+- last exiting mode family: `(4,8)` and `(8,4)`.
 
 These values are re-computed by the CI theory workflow rather than hard-coded into the simulation.
 
@@ -44,29 +44,29 @@ The upwind taxis flux is used for finite-amplitude simulations. Centered flux is
 
 With MATLAB on the path:
 
-\`\`\`matlab
+```matlab
 addpath('matlab');
 github_theory_assertions;
 github_smoke_test;
-\`\`\`
+```
 
 A single production parameter point can be run with
 
-\`\`\`matlab
+```matlab
 github_run_case(1,'window',100,0.005,180,'upwind',0);
-\`\`\`
+```
 
-Outputs are written to \`results/\` and \`figures/\`.
+Outputs are written to `results/` and `figures/`.
 
 ## GitHub Actions
 
 The repository contains the following workflows:
 
 1. **01 Theory and smoke test** — runs automatically after numerical-code changes.
-2. **02 Response-time window scan** — manual 8-point scan over \`tau = 0, 0.5, 0.65, 1, 2, 6, 6.8, 8\`.
+2. **02 Response-time window scan** — manual 8-point scan over `tau = 0, 0.5, 0.65, 1, 2, 6, 6.8, 8`.
 3. **03 Hopf branch and mode selection** — manual pure/symmetric near-entry runs with a transverse seed.
-4. **04 Ecological diagnostics** — manual long-time runs at \`tau = 0, 1, 2, 8\`.
-5. **05 Numerical refinement** — manual time-step and spatial-grid checks at \`tau = 0.65, 1, 6.8\`.
+4. **04 Ecological diagnostics** — manual long-time runs at `tau = 0, 1, 2, 8`.
+5. **05 Numerical refinement** — manual time-step and spatial-grid checks at `tau = 0.65, 1, 6.8`.
 6. **06 Optional continuation** — manual sequential response-time continuation.
 
 Each production job uploads MAT files, CSV histories/summaries, logs, and generated PDF figures as GitHub Actions artifacts.
