@@ -1,0 +1,48 @@
+name: 01 Theory and smoke test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'matlab/**'
+      - '.github/workflows/01_theory_smoke.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: theory-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+
+      - name: Verify spectral thresholds and normal form
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_theory_assertions;
+
+      - name: Run short nonlinear PDE smoke test
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_smoke_test;
+
+      - name: Upload verification outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: theory-and-smoke
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
