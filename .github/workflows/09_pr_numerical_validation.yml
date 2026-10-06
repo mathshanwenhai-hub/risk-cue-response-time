@@ -1,0 +1,70 @@
+name: 09 PR numerical validation
+
+on:
+  pull_request:
+
+jobs:
+  refinement:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { tau: 0.65, kind: window, nx: 100, dt: 0.005, tend: 80, tag: t065-linear-base }
+          - { tau: 0.65, kind: window, nx: 100, dt: 0.0025, tend: 80, tag: t065-linear-dt2 }
+          - { tau: 0.65, kind: window, nx: 150, dt: 0.005, tend: 80, tag: t065-linear-space }
+          - { tau: 1, kind: ecology, nx: 100, dt: 0.005, tend: 300, tag: t1-nonlinear-base }
+          - { tau: 1, kind: ecology, nx: 100, dt: 0.0025, tend: 300, tag: t1-nonlinear-dt2 }
+          - { tau: 1, kind: ecology, nx: 150, dt: 0.005, tend: 300, tag: t1-nonlinear-space }
+          - { tau: 6.8, kind: window, nx: 100, dt: 0.005, tend: 80, tag: t68-linear-base }
+          - { tau: 6.8, kind: window, nx: 100, dt: 0.0025, tend: 80, tag: t68-linear-dt2 }
+          - { tau: 6.8, kind: window, nx: 150, dt: 0.005, tend: 80, tag: t68-linear-space }
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run refinement case
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'${{ matrix.kind }}',${{ matrix.nx }},${{ matrix.dt }},${{ matrix.tend }},'upwind',0);
+      - name: Upload refinement outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-refinement-${{ matrix.tag }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
+
+  ecology_extended:
+    strategy:
+      fail-fast: false
+      matrix:
+        tau: [1, 2]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run extended ecology
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',100,0.005,1500,'upwind',0);
+      - name: Upload extended ecology outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-ecology-extended-tau-${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
