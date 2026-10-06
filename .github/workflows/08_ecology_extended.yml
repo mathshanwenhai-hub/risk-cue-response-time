@@ -3,7 +3,7 @@ name: 08 Extended ecological diagnostics
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [automation/numerical-validation]
     paths:
       - 'triggers/ecology_extension.txt'
 
