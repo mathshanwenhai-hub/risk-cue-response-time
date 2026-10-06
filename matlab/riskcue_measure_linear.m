@@ -9,7 +9,7 @@ z1=H.modal1_real+1i*H.modal1_imag;
 z2=H.modal2_real+1i*H.modal2_imag;
 amp=sqrt(abs(z1).^2+abs(z2).^2);
 tcap=min(R.time_final,max(5,min(30,.30*R.num.Tend)));
-id=H.time>0 & H.time<=tcap & amp>1e-12 & H.AP<.05 & H.AN<.05;
+id=H.time>=min(2,tcap/3) & H.time<=tcap & amp>1e-13 & H.AP<.01 & H.AN<.01;
 if sum(id)<8
  k=min(height(H),max(8,round(.25*height(H))));
  id=false(height(H),1);id(2:k)=true;id=id & amp>1e-12;
