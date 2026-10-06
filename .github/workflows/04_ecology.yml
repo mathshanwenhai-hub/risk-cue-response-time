@@ -1,0 +1,33 @@
+name: 04 Ecological diagnostics
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ecology:
+    strategy:
+      fail-fast: false
+      matrix:
+        tau: [0, 1, 2, 8]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run ecological case
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',100,0.005,240,'upwind',0);
+      - name: Upload ecological outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ecology-tau-${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
