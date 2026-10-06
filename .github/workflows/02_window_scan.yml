@@ -1,0 +1,39 @@
+name: 02 Response-time window scan
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: window-scan-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  simulate:
+    strategy:
+      fail-fast: false
+      matrix:
+        tau: [0, 0.5, 0.65, 1, 2, 6, 6.8, 8]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run one response-time case
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'window',100,0.005,180,'upwind',0);
+      - name: Upload numerical outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: window-tau-${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
