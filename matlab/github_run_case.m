@@ -1,14 +1,6 @@
 function R = github_run_case(tau,kind,Nx,dt,Tend,flux,seed)
 %GITHUB_RUN_CASE One reproducible CI parameter point with CSV summary.
 if nargin<2 || isempty(kind),kind='window';end
-
-function M=mode_prediction(mode,p,num)
-e=riskcue_equilibrium(p);
-dx=p.Lx/num.Nx;dy=p.Ly/num.Ny;
-lh=4/dx^2*sin(mode(1)*pi/(2*num.Nx))^2+4/dy^2*sin(mode(2)*pi/(2*num.Ny))^2;
-A=riskcue_mode(lh,p.tau,p,e);z=eig(A);[g,j]=max(real(z));
-M=struct('lambda_h',lh,'growth',g,'omega',abs(imag(z(j))));
-end
 if nargin<3 || isempty(Nx),Nx=100;end
 if nargin<4 || isempty(dt),dt=.005;end
 if nargin<5 || isempty(Tend),Tend=180;end
@@ -70,4 +62,12 @@ end
 if ~strcmp(R.status,'completed')
  error('riskcue:ciStopped','Simulation stopped: %s',R.message);
 end
+end
+
+function M=mode_prediction(mode,p,num)
+e=riskcue_equilibrium(p);
+dx=p.Lx/num.Nx;dy=p.Ly/num.Ny;
+lh=4/dx^2*sin(mode(1)*pi/(2*num.Nx))^2+4/dy^2*sin(mode(2)*pi/(2*num.Ny))^2;
+A=riskcue_mode(lh,p.tau,p,e);z=eig(A);[g,j]=max(real(z));
+M=struct('lambda_h',lh,'growth',g,'omega',abs(imag(z(j))));
 end
