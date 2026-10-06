@@ -2,6 +2,10 @@ name: 05 Numerical refinement
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'triggers/refinement.txt'
 
 jobs:
   refine:
@@ -9,15 +13,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { tau: 0.65, nx: 100, dt: 0.005, tag: t065-base }
-          - { tau: 0.65, nx: 100, dt: 0.0025, tag: t065-dt2 }
-          - { tau: 0.65, nx: 150, dt: 0.005, tag: t065-space }
-          - { tau: 1, nx: 100, dt: 0.005, tag: t1-base }
-          - { tau: 1, nx: 100, dt: 0.0025, tag: t1-dt2 }
-          - { tau: 1, nx: 150, dt: 0.005, tag: t1-space }
-          - { tau: 6.8, nx: 100, dt: 0.005, tag: t68-base }
-          - { tau: 6.8, nx: 100, dt: 0.0025, tag: t68-dt2 }
-          - { tau: 6.8, nx: 150, dt: 0.005, tag: t68-space }
+          - { tau: 0.65, kind: window, nx: 100, dt: 0.005, tend: 80, tag: t065-linear-base }
+          - { tau: 0.65, kind: window, nx: 100, dt: 0.0025, tend: 80, tag: t065-linear-dt2 }
+          - { tau: 0.65, kind: window, nx: 150, dt: 0.005, tend: 80, tag: t065-linear-space }
+          - { tau: 1, kind: ecology, nx: 100, dt: 0.005, tend: 300, tag: t1-nonlinear-base }
+          - { tau: 1, kind: ecology, nx: 100, dt: 0.0025, tend: 300, tag: t1-nonlinear-dt2 }
+          - { tau: 1, kind: ecology, nx: 150, dt: 0.005, tend: 300, tag: t1-nonlinear-space }
+          - { tau: 6.8, kind: window, nx: 100, dt: 0.005, tend: 80, tag: t68-linear-base }
+          - { tau: 6.8, kind: window, nx: 100, dt: 0.0025, tend: 80, tag: t68-linear-dt2 }
+          - { tau: 6.8, kind: window, nx: 150, dt: 0.005, tend: 80, tag: t68-linear-space }
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -29,12 +33,12 @@ jobs:
       - name: Run refinement case
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',${{ matrix.nx }},${{ matrix.dt }},180,'upwind',0);
+          command: addpath('matlab'); github_run_case(\${{ matrix.tau }},'\${{ matrix.kind }}',\${{ matrix.nx }},\${{ matrix.dt }},\${{ matrix.tend }},'upwind',0);
       - name: Upload refinement outputs
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: refinement-${{ matrix.tag }}
+          name: refinement-\${{ matrix.tag }}
           path: |
             results/
             figures/
