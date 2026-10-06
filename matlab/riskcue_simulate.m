@@ -39,9 +39,11 @@ if isempty(initial)
  switch lower(num.initial_kind)
   case 'broadband'
    zP=cos(pi*X/p.Lx).*cos(2*pi*Y/p.Ly)+.4*cos(4*pi*X/p.Lx).*cos(6*pi*Y/p.Ly) ...
-       +.23*cos(6*pi*X/p.Lx).*cos(4*pi*Y/p.Ly)+.2*cos(7*pi*X/p.Lx).*cos(3*pi*Y/p.Ly);
+       +.23*cos(6*pi*X/p.Lx).*cos(4*pi*Y/p.Ly)+.2*cos(7*pi*X/p.Lx).*cos(3*pi*Y/p.Ly) ...
+       +.17*cos(4*pi*X/p.Lx).*cos(8*pi*Y/p.Ly)+.13*cos(8*pi*X/p.Lx).*cos(4*pi*Y/p.Ly);
    zN=.8*cos(2*pi*X/p.Lx).*cos(pi*Y/p.Ly)-.3*cos(4*pi*X/p.Lx).*cos(6*pi*Y/p.Ly) ...
-       +.21*cos(6*pi*X/p.Lx).*cos(4*pi*Y/p.Ly);
+       +.21*cos(6*pi*X/p.Lx).*cos(4*pi*Y/p.Ly)-.16*cos(4*pi*X/p.Lx).*cos(8*pi*Y/p.Ly) ...
+       +.11*cos(8*pi*X/p.Lx).*cos(4*pi*Y/p.Ly);
    zP=zP/max(abs(zP(:)));zN=zN/max(abs(zN(:)));
    P=e.P*(1+num.initial_amplitude*zP);N=e.N*(1+num.initial_amplitude*zN);
   case {'pure','symmetric'}
