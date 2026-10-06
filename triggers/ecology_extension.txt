@@ -1,0 +1,1 @@
+trigger 2026-10-06: extend tau=1,2 ecology to T=1500 for late-window stationarity
