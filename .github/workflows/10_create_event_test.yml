@@ -1,0 +1,9 @@
+name: 10 Create event test
+on:
+  create:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: echo create-event-ok
