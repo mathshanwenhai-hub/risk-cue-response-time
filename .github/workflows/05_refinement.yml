@@ -1,11 +1,11 @@
 name: 05 Numerical refinement
 
 on:
-  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [automation/numerical-validation-run2]
     paths:
       - 'triggers/refinement.txt'
+  workflow_dispatch:
 
 jobs:
   refine:
@@ -33,12 +33,12 @@ jobs:
       - name: Run refinement case
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_case(\${{ matrix.tau }},'\${{ matrix.kind }}',\${{ matrix.nx }},\${{ matrix.dt }},\${{ matrix.tend }},'upwind',0);
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'${{ matrix.kind }}',${{ matrix.nx }},${{ matrix.dt }},${{ matrix.tend }},'upwind',0);
       - name: Upload refinement outputs
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: refinement-\${{ matrix.tag }}
+          name: refinement-${{ matrix.tag }}
           path: |
             results/
             figures/

@@ -1,0 +1,37 @@
+name: 08 Extended ecological diagnostics
+
+on:
+  push:
+    branches: [automation/numerical-validation-run2]
+    paths:
+      - 'triggers/ecology_extension.txt'
+  workflow_dispatch:
+
+jobs:
+  ecology:
+    strategy:
+      fail-fast: false
+      matrix:
+        tau: [1, 2]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run extended ecological case
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',100,0.005,1500,'upwind',0);
+      - name: Upload extended ecological outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ecology-extended-tau-${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
