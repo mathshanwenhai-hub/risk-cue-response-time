@@ -1,0 +1,29 @@
+name: 06 Optional response-time continuation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  continuation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run sequential continuation
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); opt=struct(); opt.num=struct('Nx',100,'Ny',100,'dt',0.005,'Tend',120,'progress_every',4000); run_siap_study('continuation',opt);
+      - name: Upload continuation outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: continuation
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
