@@ -9,3 +9,5 @@ codegen/
 Thumbs.db
 results/
 figures/generated/
+figures/*.pdf
+figures/*.png
