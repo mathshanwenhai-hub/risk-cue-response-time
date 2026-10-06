@@ -1,14 +1,18 @@
-name: 03 Hopf branch and mode selection
+name: 03 Hopf branch and mode selection (isolated square)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'triggers/hopf_branch.txt'
 
 jobs:
   branch:
     strategy:
       fail-fast: false
       matrix:
-        tau: [0.62, 0.64, 0.68, 0.75]
+        tau: [0.612, 0.615, 0.618, 0.620]
         kind: [pure, symmetric]
     runs-on: ubuntu-latest
     timeout-minutes: 360
@@ -21,7 +25,7 @@ jobs:
       - name: Run near-entry branch case
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'${{ matrix.kind }}',100,0.005,600,'centered',1e-8);
+          command: addpath('matlab'); github_run_branch_case(${{ matrix.tau }},'${{ matrix.kind }}',5,50,0.005,2000,1e-8);
       - name: Upload branch outputs
         if: always()
         uses: actions/upload-artifact@v7
