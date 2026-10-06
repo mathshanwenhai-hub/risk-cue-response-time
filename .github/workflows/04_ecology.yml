@@ -2,6 +2,10 @@ name: 04 Ecological diagnostics
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'triggers/ecology.txt'
 
 jobs:
   ecology:
@@ -20,7 +24,7 @@ jobs:
       - name: Run ecological case
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',100,0.005,240,'upwind',0);
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',100,0.005,600,'upwind',0);
       - name: Upload ecological outputs
         if: always()
         uses: actions/upload-artifact@v7
