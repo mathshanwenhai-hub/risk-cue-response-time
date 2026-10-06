@@ -51,7 +51,9 @@ T=table(tau,Nx,dt,Tend,{kind},{flux},M.m,M.n,M.lambda_h,M.growth,M.omega, ...
  'mass_residualW','minP','minN','minW','avg_consumption','avg_Ntotal','avg_overlap', ...
  'avg_cue_mismatch','avg_C_abundance','avg_C_heterogeneity','avg_C_association','status','message'});
 writetable(T,fullfile(outdir,['summary_' tag '.csv']));
-if any(strcmpi(kind,{'window','ecology','smoke'}))
+if strcmpi(kind,'smoke')
+ % Keep CI smoke tests minimal: no long-time averages or publication figures.
+elseif any(strcmpi(kind,{'window','ecology'}))
  riskcue_plot('baseline',{R},figdir);
 else
  riskcue_plot('branches',{R},figdir);
