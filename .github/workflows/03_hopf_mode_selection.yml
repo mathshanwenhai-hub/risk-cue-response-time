@@ -1,0 +1,34 @@
+name: 03 Hopf branch and mode selection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  branch:
+    strategy:
+      fail-fast: false
+      matrix:
+        tau: [0.62, 0.64, 0.68, 0.75]
+        kind: [pure, symmetric]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Run near-entry branch case
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'${{ matrix.kind }}',100,0.005,600,'centered',1e-8);
+      - name: Upload branch outputs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: branch-${{ matrix.kind }}-tau-${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
