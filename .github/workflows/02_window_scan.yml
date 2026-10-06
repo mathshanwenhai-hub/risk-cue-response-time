@@ -30,7 +30,7 @@ jobs:
       - name: Run one response-time case
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'window',100,0.005,180,'upwind',0);
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'window',100,0.005,60,'upwind',0);
       - name: Upload numerical outputs
         if: always()
         uses: actions/upload-artifact@v7
