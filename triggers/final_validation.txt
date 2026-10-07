@@ -1,0 +1,1 @@
+trigger 2026-10-07: final T=3000 ecology and T=4000 near-threshold Hopf validation
