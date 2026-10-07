@@ -1,0 +1,66 @@
+name: 09 Final numerical validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'triggers/final_validation.txt'
+
+jobs:
+  ecology-extension:
+    strategy:
+      fail-fast: false
+      matrix:
+        tau: [1, 2]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Extend ecology to T=3000
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_case(\${{ matrix.tau }},'ecology',100,0.005,3000,'upwind',0);
+      - name: Upload ecology extension
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: final-ecology-tau-\${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
+
+  hopf-near-threshold-extension:
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [pure, symmetric]
+        tau: [0.612]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+          cache: true
+      - name: Extend near-threshold branch to T=4000
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('matlab'); github_run_branch_case(\${{ matrix.tau }},'\${{ matrix.kind }}',5,50,0.005,4000,1e-8);
+      - name: Upload Hopf extension
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: final-hopf-\${{ matrix.kind }}-tau-\${{ matrix.tau }}
+          path: |
+            results/
+            figures/
+          if-no-files-found: warn
+          retention-days: 30
