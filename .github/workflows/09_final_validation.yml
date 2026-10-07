@@ -3,9 +3,9 @@ name: 09 Final numerical validation
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [automation/final-validation-fixed]
     paths:
-      - 'triggers/final_validation.txt'
+      - 'triggers/final_validation_fixed.txt'
 
 jobs:
   ecology-extension:
@@ -24,12 +24,12 @@ jobs:
       - name: Extend ecology to T=3000
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_case(\${{ matrix.tau }},'ecology',100,0.005,3000,'upwind',0);
+          command: addpath('matlab'); github_run_case(${{ matrix.tau }},'ecology',100,0.005,3000,'upwind',0);
       - name: Upload ecology extension
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: final-ecology-tau-\${{ matrix.tau }}
+          name: final-ecology-tau-${{ matrix.tau }}
           path: |
             results/
             figures/
@@ -53,12 +53,12 @@ jobs:
       - name: Extend near-threshold branch to T=4000
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath('matlab'); github_run_branch_case(\${{ matrix.tau }},'\${{ matrix.kind }}',5,50,0.005,4000,1e-8);
+          command: addpath('matlab'); github_run_branch_case(${{ matrix.tau }},'${{ matrix.kind }}',5,50,0.005,4000,1e-8);
       - name: Upload Hopf extension
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: final-hopf-\${{ matrix.kind }}-tau-\${{ matrix.tau }}
+          name: final-hopf-${{ matrix.kind }}-tau-${{ matrix.tau }}
           path: |
             results/
             figures/
